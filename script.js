@@ -98,10 +98,6 @@ function init() {
     updateDeviceButtons();
     updateTable();
     updateLogs();
-
-    // 초기 상태: 테이블 접힘
-    statusTableContainer.style.maxHeight = '0px';
-    toggleStatusTableBtn.textContent = '펼치기 >';
 }
 
 // 팀원 선택
@@ -111,8 +107,16 @@ function selectTeamMember(member) {
     document.getElementById('device-section').style.display = 'block';
 
     Array.from(teamButtonsContainer.children).forEach((button) => {
-        button.classList.toggle('active', button.textContent === member);
+        button.classList.remove('active'); // 기존 active 제거
     });
+
+    const selectedButton = Array.from(teamButtonsContainer.children).find(
+        (button) => button.textContent === member
+    );
+
+    if (selectedButton) {
+        selectedButton.classList.add('active'); // 선택된 버튼에 active 추가
+    }
 
     updateMyDevices();
     updateDeviceButtons();
@@ -169,7 +173,7 @@ function rentDevice(device) {
     addLog(`${selectedMember}이(가) ${device} 대여`);
     updateDeviceButtons();
     updateMyDevices();
-    updateTable();
+    updateTable(); // 표 업데이트만 수행
 }
 
 // 단말기 반납
@@ -182,7 +186,7 @@ function returnDevice(device) {
     addLog(`${selectedMember}이(가) ${device} 반납`);
     updateDeviceButtons();
     updateMyDevices();
-    updateTable();
+    updateTable(); // 표 업데이트만 수행
 }
 
 // 대여 현황 테이블 업데이트
@@ -251,8 +255,8 @@ toggleStatusTableBtn?.addEventListener('click', () => {
 
 // 화면 하단에 문구 추가
 const footer = document.createElement('div');
-footer.textContent = "Created by Yamgo wite bestie ChatGPT";
-footer.style.position = "absolute";
+footer.textContent = "Created by Yamgo with bestie ChatGPT";
+footer.style.position = "fixed"; // 고정 위치
 footer.style.bottom = "10px";
 footer.style.left = "10px";
 footer.style.color = "#777";
@@ -260,3 +264,4 @@ footer.style.fontSize = "0.8rem";
 document.body.appendChild(footer);
 
 window.onload = loadDataAndInitialize;
+

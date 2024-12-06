@@ -1,4 +1,3 @@
-/* styles.css */
 body {
     font-family: 'Apple SD Gothic Neo', sans-serif;
     margin: 0;
@@ -142,8 +141,6 @@ button.active {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
-
-
 #status-table-container {
     max-height: 0;
     overflow: hidden;
@@ -198,3 +195,14 @@ button.active {
     cursor: pointer;
     text-decoration: underline;
 }
+
+/* 고정된 푸터 */
+footer {
+    position: fixed; /* 스크롤에도 고정 */
+    bottom: 10px;
+    left: 10px;
+    color: #777;
+    font-size: 0.8rem;
+    z-index: 1000;
+}
+
