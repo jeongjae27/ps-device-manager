@@ -109,11 +109,7 @@ function selectTeamMember(member) {
 
     // 모든 버튼에서 active 제거, 선택된 버튼만 active 추가
     Array.from(teamButtonsContainer.children).forEach((button) => {
-        if (button.textContent === member) {
-            button.classList.add('active'); // 선택된 버튼에 active 추가
-        } else {
-            button.classList.remove('active'); // 다른 버튼에서 active 제거
-        }
+        button.classList.toggle('active', button.textContent === member);
     });
 
     // 업데이트 함수 호출
@@ -133,6 +129,11 @@ function updateDeviceButtons() {
         button.disabled = isRented;
         button.addEventListener('click', () => rentDevice(device));
         deviceButtonsContainer.appendChild(button);
+    });
+
+    // 팀원 버튼 상태 유지
+    Array.from(teamButtonsContainer.children).forEach((button) => {
+        button.classList.toggle('active', button.textContent === selectedMember);
     });
 }
 
@@ -160,6 +161,11 @@ function updateMyDevices() {
             myDevicesContainer.appendChild(button);
         });
     }
+
+    // 팀원 버튼 상태 유지
+    Array.from(teamButtonsContainer.children).forEach((button) => {
+        button.classList.toggle('active', button.textContent === selectedMember);
+    });
 }
 
 // 단말기 대여
@@ -172,7 +178,7 @@ function rentDevice(device) {
     addLog(`${selectedMember}이(가) ${device} 대여`);
     updateDeviceButtons();
     updateMyDevices();
-    updateTable(); // 표 업데이트만 수행
+    updateTable();
 }
 
 // 단말기 반납
@@ -185,7 +191,7 @@ function returnDevice(device) {
     addLog(`${selectedMember}이(가) ${device} 반납`);
     updateDeviceButtons();
     updateMyDevices();
-    updateTable(); // 표 업데이트만 수행
+    updateTable();
 }
 
 // 대여 현황 테이블 업데이트
@@ -255,7 +261,7 @@ toggleStatusTableBtn?.addEventListener('click', () => {
 // 화면 하단에 문구 추가
 const footer = document.createElement('div');
 footer.textContent = "Created by Yamgo with bestie ChatGPT";
-footer.style.position = "fixed"; // 고정 위치
+footer.style.position = "fixed";
 footer.style.bottom = "10px";
 footer.style.left = "10px";
 footer.style.color = "#777";
@@ -263,5 +269,6 @@ footer.style.fontSize = "0.8rem";
 document.body.appendChild(footer);
 
 window.onload = loadDataAndInitialize;
+
 
 
