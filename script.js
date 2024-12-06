@@ -1,3 +1,20 @@
+// Firebase 초기화
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyBvJxmcTKfGPMFfMmP1HdRn6tD8AY8bi-s",
+    authDomain: "ps-device-manager.firebaseapp.com",
+    databaseURL: "https://ps-device-manager-default-rtdb.firebaseio.com",
+    projectId: "ps-device-manager",
+    storageBucket: "ps-device-manager.firebasestorage.app",
+    messagingSenderId: "570154660486",
+    appId: "1:570154660486:web:76fa3402adbf23ee229707"
+};
+
+const app = initializeApp(firebaseConfig);
+const database = getDatabase(app);
+
 // 상태 관리 변수
 let selectedMember = null;
 let rentalStatus = {};
@@ -5,19 +22,20 @@ let logs = [];
 let devices = [];
 let teamMembers = [];
 
-// 관리자 페이지 데이터 관리
-function loadData() {
-    teamMembers = JSON.parse(localStorage.getItem('teamMembers')) || [];
-    devices = JSON.parse(localStorage.getItem('devices')) || [];
-    rentalStatus = JSON.parse(localStorage.getItem('rentalStatus')) || {};
-    logs = JSON.parse(localStorage.getItem('logs')) || [];
+// Firebase 데이터 저장
+function saveToFirebase(path, data) {
+    set(ref(database, path), data)
+        .then(() => console.log(`Data saved to ${path} successfully!`))
+        .catch((error) => console.error("Error saving data:", error));
 }
 
-function saveData() {
-    localStorage.setItem('teamMembers', JSON.stringify(teamMembers));
-    localStorage.setItem('devices', JSON.stringify(devices));
-    localStorage.setItem('rentalStatus', JSON.stringify(rentalStatus));
-    localStorage.setItem('logs', JSON.stringify(logs));
+// Firebase 데이터 읽기
+function loadFromFirebase(path, callback) {
+    const dbRef = ref(database, path);
+    onValue(dbRef, (snapshot) => {
+        const data = snapshot.val();
+        if (callback) callback(data);
+    });
 }
 
 // DOM Elements
@@ -31,8 +49,6 @@ const statusTableContainer = document.getElementById('status-table-container');
 
 // 초기화 함수
 function init() {
-    loadData();
-
     if (teamMembers.length === 0 || devices.length === 0) {
         alert('관리자 페이지에서 팀원과 단말기를 등록해주세요.');
         return;
@@ -115,8 +131,11 @@ function updateMyDevices() {
 function rentDevice(device) {
     if (!selectedMember) return;
     rentalStatus[selectedMember].push(device);
+
+    // Firebase에 저장
+    saveToFirebase("rentalStatus", rentalStatus);
+
     addLog(`${selectedMember}이(가) ${device} 대여`);
-    saveData(); // 데이터 저장
     updateDeviceButtons();
     updateMyDevices();
     updateTable();
@@ -126,8 +145,11 @@ function rentDevice(device) {
 function returnDevice(device) {
     if (!selectedMember) return;
     rentalStatus[selectedMember] = rentalStatus[selectedMember].filter(d => d !== device);
+
+    // Firebase에 저장
+    saveToFirebase("rentalStatus", rentalStatus);
+
     addLog(`${selectedMember}이(가) ${device} 반납`);
-    saveData(); // 데이터 저장
     updateDeviceButtons();
     updateMyDevices();
     updateTable();
@@ -158,18 +180,19 @@ function updateTable() {
 
         statusTableBody.appendChild(row);
     });
-
-    saveData(); // 데이터 저장
 }
 
 // 로그 추가
 function addLog(message) {
     const today = new Date();
     const date = `${today.getFullYear() % 100}.${(today.getMonth() + 1).toString().padStart(2, '0')}.${today.getDate().toString().padStart(2, '0')}`;
-    logs.unshift(`[${date}] ${message}`); // 최신 로그를 배열의 앞쪽에 추가
-    if (logs.length > 30) logs.pop(); // 최대 30개의 로그만 유지
+    logs.unshift(`[${date}] ${message}`);
+    if (logs.length > 30) logs.pop();
+
+    // Firebase에 저장
+    saveToFirebase("logs", logs);
+
     updateLogs();
-    saveData(); // 데이터 저장
 }
 
 // 로그 업데이트
@@ -189,5 +212,26 @@ toggleStatusTableBtn.addEventListener('click', () => {
     toggleStatusTableBtn.textContent = isHidden ? '접기 >' : '펼치기 >';
 });
 
-// 초기화 실행
-init();
+// Firebase에서 데이터 불러오기 및 초기화 실행
+window.onload = () => {
+    loadFromFirebase("rentalStatus", (data) => {
+        rentalStatus = data || {};
+        updateTable();
+    });
+
+    loadFromFirebase("logs", (data) => {
+        logs = data || [];
+        updateLogs();
+    });
+
+    loadFromFirebase("teamMembers", (data) => {
+        teamMembers = data || [];
+        init();
+    });
+
+    loadFromFirebase("devices", (data) => {
+        devices = data || [];
+        init();
+    });
+};
+
