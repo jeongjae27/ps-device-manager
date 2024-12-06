@@ -47,16 +47,47 @@ const logList = document.getElementById('log-list');
 const toggleStatusTableBtn = document.getElementById('toggle-status-table-btn');
 const statusTableContainer = document.getElementById('status-table-container');
 
+// 데이터 로드 후 초기화
+function loadDataAndInitialize() {
+    let membersLoaded = false;
+    let devicesLoaded = false;
+    let rentalStatusLoaded = false;
+    let logsLoaded = false;
+
+    loadFromFirebase("teamMembers", (data) => {
+        teamMembers = data || [];
+        membersLoaded = true;
+        if (membersLoaded && devicesLoaded && rentalStatusLoaded && logsLoaded) init();
+    });
+
+    loadFromFirebase("devices", (data) => {
+        devices = data || [];
+        devicesLoaded = true;
+        if (membersLoaded && devicesLoaded && rentalStatusLoaded && logsLoaded) init();
+    });
+
+    loadFromFirebase("rentalStatus", (data) => {
+        rentalStatus = data || {};
+        rentalStatusLoaded = true;
+        if (membersLoaded && devicesLoaded && rentalStatusLoaded && logsLoaded) init();
+    });
+
+    loadFromFirebase("logs", (data) => {
+        logs = data || [];
+        logsLoaded = true;
+        if (membersLoaded && devicesLoaded && rentalStatusLoaded && logsLoaded) init();
+    });
+}
+
 // 초기화 함수
 function init() {
     if (teamMembers.length === 0 || devices.length === 0) {
-        console.warn('관리자 페이지에서 팀원과 단말기를 등록해주세요.'); // 콘솔에 경고 출력
+        console.warn('관리자 페이지에서 팀원과 단말기를 등록해주세요.');
         return;
     }
 
-    // 팀원 버튼 초기화
     teamButtonsContainer.innerHTML = '';
-    teamMembers.forEach(member => {
+    teamMembers.forEach((member) => {
         rentalStatus[member] = rentalStatus[member] || [];
         const button = document.createElement('button');
         button.textContent = member;
@@ -64,7 +95,6 @@ function init() {
         teamButtonsContainer.appendChild(button);
     });
 
-    // 단말기 버튼 초기화
     updateDeviceButtons();
     updateTable();
     updateLogs();
@@ -74,16 +104,13 @@ function init() {
 function selectTeamMember(member) {
     selectedMember = member;
 
-    // 단말기 섹션 표시
     document.getElementById('device-section').style.display = 'block';
 
-    // 선택된 팀원 버튼 강조
-    Array.from(teamButtonsContainer.children).forEach(button => {
+    Array.from(teamButtonsContainer.children).forEach((button) => {
         button.classList.remove('active');
         if (button.textContent === member) button.classList.add('active');
     });
 
-    // 내 보유 단말기 및 단말기 버튼 업데이트
     updateMyDevices();
     updateDeviceButtons();
 }
@@ -91,8 +118,10 @@ function selectTeamMember(member) {
 // 단말기 버튼 업데이트
 function updateDeviceButtons() {
     deviceButtonsContainer.innerHTML = '';
-    devices.forEach(device => {
-        const isRented = Object.values(rentalStatus).some(memberDevices => memberDevices.includes(device));
+    devices.forEach((device) => {
+        const isRented = Object.values(rentalStatus).some((memberDevices) =>
+            memberDevices.includes(device)
+        );
         const button = document.createElement('button');
         button.textContent = device;
         button.disabled = isRented;
@@ -109,20 +138,19 @@ function updateMyDevices() {
         document.getElementById('my-devices-section').style.display = 'none';
     } else {
         document.getElementById('my-devices-section').style.display = 'block';
-        myDevices.forEach(device => {
+        myDevices.forEach((device) => {
             const button = document.createElement('button');
             button.textContent = device;
 
-            // 'X' 버튼 추가
             const closeButton = document.createElement('span');
             closeButton.textContent = 'X';
             closeButton.addEventListener('click', (e) => {
-                e.stopPropagation(); // 부모 버튼 클릭 이벤트 방지
-                returnDevice(device); // 반납 처리
+                e.stopPropagation();
+                returnDevice(device);
             });
 
             button.appendChild(closeButton);
-            button.addEventListener('click', () => returnDevice(device)); // 반납 버튼 동작
+            button.addEventListener('click', () => returnDevice(device));
             myDevicesContainer.appendChild(button);
         });
     }
@@ -133,7 +161,6 @@ function rentDevice(device) {
     if (!selectedMember) return;
     rentalStatus[selectedMember].push(device);
 
-    // Firebase에 저장
     saveToFirebase("rentalStatus", rentalStatus);
 
     addLog(`${selectedMember}이(가) ${device} 대여`);
@@ -145,9 +172,8 @@ function rentDevice(device) {
 // 단말기 반납
 function returnDevice(device) {
     if (!selectedMember) return;
-    rentalStatus[selectedMember] = rentalStatus[selectedMember].filter(d => d !== device);
+    rentalStatus[selectedMember] = rentalStatus[selectedMember].filter((d) => d !== device);
 
-    // Firebase에 저장
     saveToFirebase("rentalStatus", rentalStatus);
 
     addLog(`${selectedMember}이(가) ${device} 반납`);
@@ -160,20 +186,20 @@ function returnDevice(device) {
 function updateTable() {
     const tableHead = document.querySelector('#status-table thead tr');
     tableHead.innerHTML = '<th>팀원</th>';
-    devices.forEach(device => {
+    devices.forEach((device) => {
         const th = document.createElement('th');
         th.textContent = device;
         tableHead.appendChild(th);
     });
 
     statusTableBody.innerHTML = '';
-    teamMembers.forEach(member => {
+    teamMembers.forEach((member) => {
         const row = document.createElement('tr');
         const nameCell = document.createElement('td');
         nameCell.textContent = member;
         row.appendChild(nameCell);
 
-        devices.forEach(device => {
+        devices.forEach((device) => {
             const cell = document.createElement('td');
             cell.textContent = rentalStatus[member]?.includes(device) ? '🟢' : ' ';
             row.appendChild(cell);
@@ -182,7 +208,6 @@ function updateTable() {
         statusTableBody.appendChild(row);
     });
 
-    // 테이블 항상 표시
     statusTableContainer.style.maxHeight = '800px';
     statusTableContainer.style.overflow = 'auto';
 }
@@ -194,7 +219,6 @@ function addLog(message) {
     logs.unshift(`[${date}] ${message}`);
     if (logs.length > 30) logs.pop();
 
-    // Firebase에 저장
     saveToFirebase("logs", logs);
 
     updateLogs();
@@ -203,7 +227,7 @@ function addLog(message) {
 // 로그 업데이트
 function updateLogs() {
     logList.innerHTML = '';
-    logs.forEach(log => {
+    logs.forEach((log) => {
         const li = document.createElement('li');
         li.textContent = log;
         logList.appendChild(li);
@@ -212,27 +236,15 @@ function updateLogs() {
 
 // 대여 현황 테이블 펼치기/접기
 toggleStatusTableBtn?.addEventListener('click', () => {
-    const isHidden = statusTableContainer.style.maxHeight === '0px';
-    statusTableContainer.style.maxHeight = isHidden ? '800px' : '0px';
-    toggleStatusTableBtn.textContent = isHidden ? '접기 >' : '펼치기 >';
+    const isHidden = !statusTableContainer.classList.contains('open');
+
+    if (isHidden) {
+        statusTableContainer.classList.add('open');
+        toggleStatusTableBtn.textContent = '접기 >';
+    } else {
+        statusTableContainer.classList.remove('open');
+        toggleStatusTableBtn.textContent = '펼치기 >';
+    }
 });
-
-// Firebase에서 데이터 로드 후 초기화 실행
-function loadDataAndInitialize() {
-    let membersLoaded = false;
-    let devicesLoaded = false;
-
-    loadFromFirebase("teamMembers", (data) => {
-        teamMembers = data || [];
-        membersLoaded = true;
-        if (membersLoaded && devicesLoaded) init();
-    });
-
-    loadFromFirebase("devices", (data) => {
-        devices = data || [];
-        devicesLoaded = true;
-        if (membersLoaded && devicesLoaded) init();
-    });
-}
 
 window.onload = loadDataAndInitialize;
