@@ -98,6 +98,10 @@ function init() {
     updateDeviceButtons();
     updateTable();
     updateLogs();
+
+    // 초기 상태: 테이블 접힘
+    statusTableContainer.style.maxHeight = '0px';
+    toggleStatusTableBtn.textContent = '펼치기 >';
 }
 
 // 팀원 선택
@@ -208,8 +212,7 @@ function updateTable() {
         statusTableBody.appendChild(row);
     });
 
-    statusTableContainer.style.maxHeight = '800px';
-    statusTableContainer.style.overflow = 'auto';
+    statusTableContainer.style.overflow = 'hidden';
 }
 
 // 로그 추가
@@ -236,16 +239,15 @@ function updateLogs() {
 
 // 대여 현황 테이블 펼치기/접기
 toggleStatusTableBtn?.addEventListener('click', () => {
-    const isHidden = !statusTableContainer.classList.contains('open');
+    const isHidden = statusTableContainer.style.maxHeight === '0px';
 
     if (isHidden) {
-        statusTableContainer.classList.add('open');
+        statusTableContainer.style.maxHeight = '800px'; // 펼침
         toggleStatusTableBtn.textContent = '접기 >';
     } else {
-        statusTableContainer.classList.remove('open');
+        statusTableContainer.style.maxHeight = '0px'; // 접힘
         toggleStatusTableBtn.textContent = '펼치기 >';
     }
 });
-
 
 window.onload = loadDataAndInitialize;
