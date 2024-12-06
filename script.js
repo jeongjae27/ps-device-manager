@@ -29,7 +29,7 @@ function saveToFirebase(path, data) {
         .catch((error) => console.error("Error saving data:", error));
 }
 
-// Firebase 데이터 읽기
+// Firebase 데이터 불러오기
 function loadFromFirebase(path, callback) {
     const dbRef = ref(database, path);
     onValue(dbRef, (snapshot) => {
@@ -50,11 +50,11 @@ const statusTableContainer = document.getElementById('status-table-container');
 // 초기화 함수
 function init() {
     if (teamMembers.length === 0 || devices.length === 0) {
-        alert('관리자 페이지에서 팀원과 단말기를 등록해주세요.');
+        console.warn('관리자 페이지에서 팀원과 단말기를 등록해주세요.'); // 콘솔에 경고 출력
         return;
     }
 
-    // 초기 상태 설정
+    // 팀원 버튼 초기화
     teamButtonsContainer.innerHTML = '';
     teamMembers.forEach(member => {
         rentalStatus[member] = rentalStatus[member] || [];
@@ -64,6 +64,7 @@ function init() {
         teamButtonsContainer.appendChild(button);
     });
 
+    // 단말기 버튼 초기화
     updateDeviceButtons();
     updateTable();
     updateLogs();
@@ -174,12 +175,16 @@ function updateTable() {
 
         devices.forEach(device => {
             const cell = document.createElement('td');
-            cell.textContent = rentalStatus[member].includes(device) ? '🟢' : ' ';
+            cell.textContent = rentalStatus[member]?.includes(device) ? '🟢' : ' ';
             row.appendChild(cell);
         });
 
         statusTableBody.appendChild(row);
     });
+
+    // 테이블 항상 표시
+    statusTableContainer.style.maxHeight = '800px';
+    statusTableContainer.style.overflow = 'auto';
 }
 
 // 로그 추가
@@ -206,32 +211,28 @@ function updateLogs() {
 }
 
 // 대여 현황 테이블 펼치기/접기
-toggleStatusTableBtn.addEventListener('click', () => {
+toggleStatusTableBtn?.addEventListener('click', () => {
     const isHidden = statusTableContainer.style.maxHeight === '0px';
     statusTableContainer.style.maxHeight = isHidden ? '800px' : '0px';
     toggleStatusTableBtn.textContent = isHidden ? '접기 >' : '펼치기 >';
 });
 
-// Firebase에서 데이터 불러오기 및 초기화 실행
-window.onload = () => {
-    loadFromFirebase("rentalStatus", (data) => {
-        rentalStatus = data || {};
-        updateTable();
-    });
-
-    loadFromFirebase("logs", (data) => {
-        logs = data || [];
-        updateLogs();
-    });
+// Firebase에서 데이터 로드 후 초기화 실행
+function loadDataAndInitialize() {
+    let membersLoaded = false;
+    let devicesLoaded = false;
 
     loadFromFirebase("teamMembers", (data) => {
         teamMembers = data || [];
-        init();
+        membersLoaded = true;
+        if (membersLoaded && devicesLoaded) init();
     });
 
     loadFromFirebase("devices", (data) => {
         devices = data || [];
-        init();
+        devicesLoaded = true;
+        if (membersLoaded && devicesLoaded) init();
     });
-};
+}
 
+window.onload = loadDataAndInitialize;
