@@ -104,20 +104,19 @@ function init() {
 function selectTeamMember(member) {
     selectedMember = member;
 
+    // 단말기 선택 섹션 표시
     document.getElementById('device-section').style.display = 'block';
 
+    // 모든 버튼에서 active 제거, 선택된 버튼만 active 추가
     Array.from(teamButtonsContainer.children).forEach((button) => {
-        button.classList.remove('active'); // 기존 active 제거
+        if (button.textContent === member) {
+            button.classList.add('active'); // 선택된 버튼에 active 추가
+        } else {
+            button.classList.remove('active'); // 다른 버튼에서 active 제거
+        }
     });
 
-    const selectedButton = Array.from(teamButtonsContainer.children).find(
-        (button) => button.textContent === member
-    );
-
-    if (selectedButton) {
-        selectedButton.classList.add('active'); // 선택된 버튼에 active 추가
-    }
-
+    // 업데이트 함수 호출
     updateMyDevices();
     updateDeviceButtons();
 }
@@ -264,4 +263,5 @@ footer.style.fontSize = "0.8rem";
 document.body.appendChild(footer);
 
 window.onload = loadDataAndInitialize;
+
 
