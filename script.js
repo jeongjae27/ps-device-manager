@@ -247,4 +247,5 @@ toggleStatusTableBtn?.addEventListener('click', () => {
     }
 });
 
+
 window.onload = loadDataAndInitialize;

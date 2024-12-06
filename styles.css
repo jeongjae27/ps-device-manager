@@ -145,7 +145,13 @@ button.active {
 
 
 #status-table-container {
-    transition: max-height 0.5s ease;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease-in-out;
+}
+
+#status-table-container.open {
+    max-height: 800px;
 }
 
 #status-table {
