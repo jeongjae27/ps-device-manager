@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>관리자 페이지</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 관리자 페이지</h1>
+
+        <!-- 팀원 관리 -->
+        <section>
+            <h2>팀원 관리</h2>
+            <input type="text" id="add-member-input" placeholder="팀원 이름 입력">
+            <button id="add-member-btn">팀원 추가</button>
+            <ul id="member-list" class="sortable"></ul>
+        </section>
+
+        <!-- 단말기 관리 -->
+        <section>
+            <h2>단말기 관리</h2>
+            <input type="text" id="add-device-input" placeholder="단말기 이름 입력">
+            <button id="add-device-btn">단말기 추가</button>
+            <ul id="device-list" class="sortable"></ul>
+        </section>
+
+        <!-- 사용자 페이지 링크 -->
+        <section>
+            <a href="index.html">🏠 사용자 페이지</a>
+        </section>
+    </div>
+    <script src="admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>테스트폰 관리</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- 관리자 페이지 링크 -->
+        <div id="admin-link">
+            <button id="admin-btn">🔧 관리자 페이지</button>
+        </div>
+
+        <h1>테스트폰 대여 관리</h1>
+
+        <!-- 팀원 선택 -->
+        <section id="team-section">
+            <h2>😄 빌리는 사람</h2>
+            <div id="team-buttons" class="card-container team-container"></div>
+        </section>
+
+        <!-- 단말기 선택 -->
+        <section id="device-section">
+            <h2>📱 빌려갈 테스트폰</h2>
+            <div id="device-buttons" class="card-container device-container"></div>
+        </section>
+
+        <!-- 내가 보유한 단말기 -->
+        <section id="my-devices-section" style="display: none;">
+            <h2>🖐 내가 가지고 있는 테스트폰 </h2>
+            <div id="my-devices-buttons" class="card-container"></div>
+        </section>
+
+        <!-- 구분선 -->
+        <div class="divider"></div>
+
+        <!-- 대여 현황 -->
+        <section id="status-section">
+            <h2>📋 대여 현황</h2>
+            <div class="toggle-container">
+                <span id="toggle-status-table-btn" class="toggle-btn">펼치기 &gt;</span>
+            </div>
+            <div id="status-table-container" style="max-height: 0; overflow: hidden;">
+                <table id="status-table">
+                    <thead>
+                        <tr>
+                            <th>팀원</th>
+                            <!-- 동적으로 열 생성 -->
+                        </tr>
+                    </thead>
+                    <tbody id="status-table-body">
+                        <!-- 동적으로 행 생성 -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 로그 섹션 -->
+        <section id="log-section">
+            <h2>📝 로그</h2>
+            <ul id="log-list"></ul>
+        </section>
+    </div>
+
+    <script>
+        document.getElementById('admin-btn').addEventListener('click', () => {
+            const password = prompt('비밀번호를 입력하세요');
+            if (password === '13579') {
+                window.location.href = 'admin.html';
+            } else {
+                alert('🙅‍♂️삐빅- 비밀번호가 틀렸습니다!🙅‍♀️');
+            }
+        });
+    </script>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,194 @@
+/* styles.css */
+body {
+    font-family: 'Apple SD Gothic Neo', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f5f5f7;
+    color: #333;
+}
+
+.container {
+    max-width: 900px;
+    margin: 60px auto 20px;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    text-align: center;
+    color: #007aff;
+    font-weight: 600;
+    margin-bottom: 30px;
+}
+
+h2 {
+    text-align: center;
+    color: #606060;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+#admin-link {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+}
+
+#admin-link button {
+    background-color: #606060;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    height: auto;
+    line-height: normal;
+}
+
+#admin-link button:hover {
+    background-color: #005bb5;
+}
+
+section {
+    margin-bottom: 40px;
+}
+
+/* 버튼 컨테이너 */
+.card-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+/* 팀원 선택 버튼 */
+.team-container button {
+    flex: 1 1 calc(18% - 10px); /* 한 줄에 최대 5개 */
+    max-width: calc(18% - 10px);
+    padding: 10px 12px;
+}
+
+/* 단말기 선택과 대여 현황 사이 구분선 */
+.divider {
+    border-top: 1px solid #d1d1d1; /* 얇은 옅은 회색 */
+    margin: 20px 0;
+}
+
+/* 단말기 선택 버튼 */
+.device-container button {
+    flex: 1 1 calc(10% - 10px); /* 한 줄에 최대 9개 */
+    max-width: calc(10% - 10px);
+    padding: 10px 12px;
+}
+
+/* 내가 보유한 단말기 버튼 */
+#my-devices-buttons button {
+    flex: 1 1 calc(10% - 10px); /* 단말기 선택 버튼과 동일한 크기 */
+    max-width: calc(10% - 10px);
+    padding: 10px 12px;
+    position: relative; /* X 버튼 위치 조정 */
+}
+
+/* 'X' 아이콘 스타일 */
+#my-devices-buttons button span {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    color: #060606; /* X표시 색상 변경 */
+    font-weight: bold;
+    font-size: 14px;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+#my-devices-buttons button span:hover {
+    color: #333333; /* 호버 시 살짝 밝은 회색 */
+}
+
+/* 공통 버튼 스타일 */
+button {
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    background-color: #f9f9f9;
+    color: #606060;
+    transition: all 0.3s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+button:hover {
+    background-color: #007aff;
+    color: white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+button:disabled {
+    background-color: #d1d1d6;
+    color: #fff;
+    cursor: not-allowed;
+}
+
+button.active {
+    background-color: #007aff;
+    color: white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+
+
+#status-table-container {
+    transition: max-height 0.5s ease;
+}
+
+#status-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 14px;
+    text-align: center;
+}
+
+#status-table th, #status-table td {
+    border: 1px solid #e0e0e0;
+    padding: 10px;
+}
+
+#status-table th {
+    background-color: #f9f9f9;
+    color: #007aff;
+    font-weight: 600;
+}
+
+#log-list {
+    list-style: none;
+    padding: 0;
+}
+
+#log-list li {
+    margin-bottom: 5px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border: 1px solid #d1d1d6;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.toggle-container {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.toggle-btn {
+    font-size: 14px;
+    color: #606060;
+    cursor: pointer;
+    text-decoration: underline;
+}
