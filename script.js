@@ -111,8 +111,7 @@ function selectTeamMember(member) {
     document.getElementById('device-section').style.display = 'block';
 
     Array.from(teamButtonsContainer.children).forEach((button) => {
-        button.classList.remove('active');
-        if (button.textContent === member) button.classList.add('active');
+        button.classList.toggle('active', button.textContent === member);
     });
 
     updateMyDevices();
@@ -249,5 +248,15 @@ toggleStatusTableBtn?.addEventListener('click', () => {
         toggleStatusTableBtn.textContent = '펼치기 >';
     }
 });
+
+// 화면 하단에 문구 추가
+const footer = document.createElement('div');
+footer.textContent = "Created by Yamgo wite bestie ChatGPT";
+footer.style.position = "absolute";
+footer.style.bottom = "10px";
+footer.style.left = "10px";
+footer.style.color = "#777";
+footer.style.fontSize = "0.8rem";
+document.body.appendChild(footer);
 
 window.onload = loadDataAndInitialize;
